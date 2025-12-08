@@ -1,0 +1,130 @@
+# ROS 2 Nodes
+
+## Introduction to ROS 2 Nodes
+
+In ROS 2, a **node** is a fundamental component of a ROS program that performs computation. Nodes are combined together into a ROS graph that enables distributed computation.
+
+### Key Concepts
+
+- **Node**: A process that performs computation and communicates with other nodes
+- **Communication**: Nodes communicate with each other using topics, services, and actions
+- **Identity**: Each node has a unique name within the ROS graph
+- **Execution**: Multiple nodes can run simultaneously and communicate with each other
+
+## Creating a Simple Publisher Node
+
+The publisher node is responsible for sending messages to other nodes through topics. Here's a basic implementation:
+
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+class SimplePublisher(Node):
+    def __init__(self):
+        super().__init__('simple_publisher')
+        self.publisher = self.create_publisher(String, 'robot_commands', 10)
+        timer_period = 1  # seconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.i = 0
+
+    def timer_callback(self):
+        msg = String()
+        msg.data = f'Hello Robot: {self.i}'
+        self.publisher.publish(msg)
+        self.get_logger().info(f'Publishing: "{msg.data}"')
+        self.i += 1
+
+def main(args=None):
+    rclpy.init(args=args)
+    simple_publisher = SimplePublisher()
+    rclpy.spin(simple_publisher)
+    simple_publisher.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+## Creating a Simple Subscriber Node
+
+The subscriber node receives messages from topics. Here's a basic implementation:
+
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+class SimpleSubscriber(Node):
+    def __init__(self):
+        super().__init__('simple_subscriber')
+        self.subscription = self.create_subscription(
+            String,
+            'robot_commands',
+            self.listener_callback,
+            10)
+        self.subscription  # prevent unused variable warning
+
+    def listener_callback(self, msg):
+        self.get_logger().info(f'I heard: "{msg.data}"')
+
+def main(args=None):
+    rclpy.init(args=args)
+    simple_subscriber = SimpleSubscriber()
+    rclpy.spin(simple_subscriber)
+    simple_subscriber.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+## Running the Nodes
+
+To run the publisher and subscriber nodes separately:
+
+```bash
+# Terminal 1 - Run the publisher
+ros2 run robot_nodes simple_publisher
+
+# Terminal 2 - Run the subscriber
+ros2 run robot_nodes simple_subscriber
+```
+
+## Launch File Approach
+
+You can also run both nodes simultaneously using a launch file:
+
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='robot_nodes',
+            executable='simple_publisher',
+            name='simple_publisher',
+            output='screen'
+        ),
+        Node(
+            package='robot_nodes',
+            executable='simple_subscriber',
+            name='simple_subscriber',
+            output='screen'
+        )
+    ])
+```
+
+Run with:
+```bash
+ros2 launch robot_nodes simple_launch.py
+```
+
+## Key Takeaways
+
+- Nodes are the basic building blocks of ROS 2 applications
+- Publishers send messages to topics, subscribers receive them
+- Nodes must be initialized with `rclpy.init()` before use
+- The `rclpy.spin()` function keeps the node running and processing callbacks
+- Launch files allow you to start multiple nodes with a single command

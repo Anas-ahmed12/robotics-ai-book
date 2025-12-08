@@ -1,0 +1,202 @@
+# ROS 2 Node Communication Contracts
+
+## Node Communication API
+
+### Publisher Node API
+- **Topic**: `/robot_commands`
+- **Message Type**: `std_msgs/String`
+- **Purpose**: Send commands from one node to another
+- **Message Format**:
+  ```json
+  {
+    "data": "command_string"
+  }
+  ```
+
+### Subscriber Node API
+- **Topic**: `/robot_commands`
+- **Message Type**: `std_msgs/String`
+- **Purpose**: Receive commands from publisher node
+- **Message Format**:
+  ```json
+  {
+    "data": "received_command"
+  }
+  ```
+
+### Node Lifecycle Management
+- **Service**: `/node_configure`
+- **Service Type**: `lifecycle_msgs/srv/Configure`
+- **Purpose**: Configure node to unconfigured state
+- **Request**: `Empty`
+- **Response**: `bool success`
+
+- **Service**: `/node_activate`
+- **Service Type**: `lifecycle_msgs/srv/Activate`
+- **Purpose**: Activate node to active state
+- **Request**: `Empty`
+- **Response**: `bool success`
+
+## Topic Management API
+
+### Custom Topic Definition
+- **Topic**: `/custom_robot_data`
+- **Message Type**: `std_msgs/Float32`
+- **Purpose**: Exchange custom floating-point data between nodes
+- **Message Format**:
+  ```json
+  {
+    "data": 0.0
+  }
+  ```
+
+### Frequency-Controlled Topic
+- **Topic**: `/timed_robot_data`
+- **Message Type**: `std_msgs/String`
+- **Purpose**: Publish messages at fixed intervals
+- **Message Format**:
+  ```json
+  {
+    "data": "timestamped_message"
+  }
+  ```
+- **Publish Rate**: 1 Hz (configurable)
+
+## Service API
+
+### Basic Service Definition
+- **Service**: `/compute_service`
+- **Service Type**: `example_interfaces/srv/AddTwoInts`
+- **Purpose**: Perform simple computation and return result
+- **Request Format**:
+  ```json
+  {
+    "a": 0,
+    "b": 0
+  }
+  ```
+- **Response Format**:
+  ```json
+  {
+    "sum": 0
+  }
+  ```
+
+### Advanced Service Definition
+- **Service**: `/robot_control_service`
+- **Service Type**: Custom service (defined in package)
+- **Purpose**: Control robot actions with complex parameters
+- **Request Format**:
+  ```json
+  {
+    "action": "move_forward",
+    "parameters": {
+      "speed": 0.5,
+      "duration": 1.0
+    }
+  }
+  ```
+- **Response Format**:
+  ```json
+  {
+    "success": true,
+    "message": "Action completed successfully"
+  }
+  ```
+
+## Python Agent Integration API
+
+### Agent Command Interface
+- **Topic**: `/agent_commands`
+- **Message Type**: `std_msgs/String`
+- **Purpose**: Send commands from Python agent to ROS 2 system
+- **Message Format**:
+  ```json
+  {
+    "data": "agent_command"
+  }
+  ```
+
+### Agent Feedback Interface
+- **Topic**: `/agent_feedback`
+- **Message Type**: `std_msgs/String`
+- **Purpose**: Receive feedback from ROS 2 system to Python agent
+- **Message Format**:
+  ```json
+  {
+    "data": "feedback_message"
+  }
+  ```
+
+### Agent Service Client
+- **Service**: `/agent_service_request`
+- **Service Type**: `example_interfaces/srv/Trigger`
+- **Purpose**: Request service from ROS 2 system via agent
+- **Request Format**:
+  ```json
+  {
+    "arm": true
+  }
+  ```
+- **Response Format**:
+  ```json
+  {
+    "success": true,
+    "message": "Service call successful"
+  }
+  ```
+
+## URDF Interface
+
+### Robot State Publisher
+- **Topic**: `/joint_states`
+- **Message Type**: `sensor_msgs/JointState`
+- **Purpose**: Publish joint positions for visualization
+- **Message Format**:
+  ```json
+  {
+    "name": ["joint1", "joint2"],
+    "position": [0.0, 0.0],
+    "velocity": [0.0, 0.0],
+    "effort": [0.0, 0.0]
+  }
+  ```
+
+### Robot Description Parameter
+- **Parameter**: `robot_description`
+- **Type**: `string`
+- **Purpose**: Store URDF robot model definition
+- **Format**: XML string containing URDF model
+
+## Error Handling Contracts
+
+### Connection Status Topic
+- **Topic**: `/connection_status`
+- **Message Type**: `std_msgs/String`
+- **Purpose**: Report connection status between components
+- **Message Format**:
+  ```json
+  {
+    "data": "connected|disconnected|error"
+  }
+  ```
+
+### Error Reporting Service
+- **Service**: `/error_report`
+- **Service Type**: Custom service
+- **Purpose**: Report and handle errors in the system
+- **Request Format**:
+  ```json
+  {
+    "error_code": 0,
+    "error_message": "description",
+    "component": "node_name"
+  }
+  ```
+- **Response Format**:
+  ```json
+  {
+    "handled": true,
+    "suggested_action": "retry|abort|continue"
+  }
+  ```

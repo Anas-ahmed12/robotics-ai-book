@@ -1,0 +1,158 @@
+# ROS 2 Topics
+
+## Introduction to ROS 2 Topics
+
+**Topics** are named buses over which nodes exchange messages. They enable asynchronous communication between nodes using a publish-subscribe pattern.
+
+### Key Concepts
+
+- **Publish-Subscribe Pattern**: Publishers send messages to topics, subscribers receive them
+- **Asynchronous**: Publishers and subscribers don't need to be active simultaneously
+- **Anonymous**: Publishers and subscribers don't know about each other
+- **Typed**: Each topic has a specific message type
+
+## Topic Communication Pattern
+
+In ROS 2, topic communication follows a publish-subscribe pattern:
+
+1. **Publisher**: Creates a publisher to send messages to a topic
+2. **Topic**: Named channel for message exchange
+3. **Subscriber**: Creates a subscription to receive messages from a topic
+
+## Creating a Publisher
+
+Here's how to create a publisher in a ROS 2 node:
+
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+class TopicPublisher(Node):
+    def __init__(self):
+        super().__init__('topic_publisher')
+        # Create publisher with topic name and message type
+        self.publisher = self.create_publisher(String, 'robot_commands', 10)
+        timer_period = 0.5  # seconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.counter = 0
+
+    def timer_callback(self):
+        msg = String()
+        msg.data = f'Command #{self.counter}: Move forward'
+        self.publisher.publish(msg)
+        self.get_logger().info(f'Published: "{msg.data}"')
+        self.counter += 1
+```
+
+## Creating a Subscriber
+
+Here's how to create a subscriber in a ROS 2 node:
+
+```python
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+class TopicSubscriber(Node):
+    def __init__(self):
+        super().__init__('topic_subscriber')
+        # Create subscription with topic name, message type, and callback
+        self.subscription = self.create_subscription(
+            String,
+            'robot_commands',
+            self.listener_callback,
+            10)
+        self.subscription  # prevent unused variable warning
+
+    def listener_callback(self, msg):
+        self.get_logger().info(f'Subscriber received: "{msg.data}"')
+```
+
+## Common Message Types
+
+ROS 2 provides various standard message types:
+
+- `std_msgs/String`: Simple text messages
+- `std_msgs/Int32`, `std_msgs/Float32`: Numeric values
+- `std_msgs/Bool`: Boolean values
+- `sensor_msgs/JointState`: Robot joint positions and velocities
+- `geometry_msgs/Twist`: Robot velocity commands
+
+## Custom Topic Example
+
+You can create custom topics with different message types:
+
+```python
+# Publisher for custom floating-point data
+class CustomTopicPublisher(Node):
+    def __init__(self):
+        super().__init__('custom_publisher')
+        from std_msgs.msg import Float32
+        self.publisher = self.create_publisher(Float32, 'custom_robot_data', 10)
+        self.timer = self.create_timer(1.0, self.publish_data)
+
+    def publish_data(self):
+        from std_msgs.msg import Float32
+        msg = Float32()
+        import random
+        msg.data = random.uniform(0.0, 100.0)
+        self.publisher.publish(msg)
+        self.get_logger().info(f'Published custom data: {msg.data}')
+```
+
+## Topic Commands
+
+Useful ROS 2 command-line tools for working with topics:
+
+```bash
+# List all active topics
+ros2 topic list
+
+# Show topic information
+ros2 topic info /robot_commands
+
+# Echo messages from a topic
+ros2 topic echo /robot_commands
+
+# Publish a message to a topic
+ros2 topic pub /robot_commands std_msgs/String "data: 'Hello from command line'"
+```
+
+## Best Practices
+
+- Use descriptive topic names following ROS naming conventions
+- Choose appropriate message types for your data
+- Set proper queue sizes based on your application's needs
+- Use consistent naming patterns across your system
+- Consider message frequency and bandwidth requirements
+
+## Advanced Topic Features
+
+### Timed Publishing
+
+Publish messages at regular intervals:
+
+```python
+class TimedPublisher(Node):
+    def __init__(self):
+        super().__init__('timed_publisher')
+        self.publisher = self.create_publisher(String, 'timed_robot_data', 10)
+        # Publish at 1 Hz (every second)
+        self.timer = self.create_timer(1.0, self.timer_callback)
+        self.count = 0
+
+    def timer_callback(self):
+        msg = String()
+        import time
+        msg.data = f'Timed message {self.count} at {time.time()}'
+        self.publisher.publish(msg)
+        self.count += 1
+```
+
+## Key Takeaways
+
+- Topics enable asynchronous communication between ROS 2 nodes
+- Publishers and subscribers communicate through named channels
+- Message types ensure data consistency across the system
+- Topic-based communication is fundamental to ROS 2's distributed architecture
