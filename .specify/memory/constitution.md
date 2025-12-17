@@ -1,8 +1,8 @@
 <!-- SYNC IMPACT REPORT:
-Version change: 1.0.0 -> 1.0.0 (Module 2 -> Module 3 & Module 4)
-Modified principles: Module 2 Digital Twin principles -> Module 3 AI-Robot Brain (NVIDIA Isaac™) and Module 4 Vision-Language-Action principles
-Added sections: Educational Accuracy principle, Hardware Acceleration principle, Path Planning Reliability principle, Voice-to-Action Accuracy principle, Cognitive Planning principle, Capstone Integrity principle
-Removed sections: None
+Version change: 1.0.0 -> 1.1.0 (Full rewrite for frontend design)
+Modified principles: Complete rewrite from robotics simulation to frontend design principles
+Added sections: Responsive Design principle, Color Theme principle, Header Structure principle, Mobile-First principle, Cross-Browser Compatibility principle
+Removed sections: All previous robotics simulation principles
 Templates requiring updates:
 - .specify/templates/plan-template.md: ⚠ pending (generic template, no changes needed)
 - .specify/templates/spec-template.md: ⚠ pending (generic template, no changes needed)
@@ -11,65 +11,53 @@ Templates requiring updates:
 Follow-up TODOs: None
 -->
 
-# Physical AI & Humanoid Robotics — Book Development Constitution
+# Robotics-AI Book Frontend Design Constitution
 
 ## Core Principles
 
-### Documentation Quality
-All documentation must be clear, concise, beginner-friendly, and technically correct for physics simulation and environment building. Code examples must be functional, minimal, and testable, with concepts aligned with 'Embodied Intelligence' principles.
+### Header Structure
+The header must have two distinct portions: left side for content (headings, descriptions about AI and robotics), right side for a robotics-related image. This dual-structure ensures clear information hierarchy while maintaining visual appeal with relevant imagery.
 
-### Docusaurus Structure & Formatting
-Follow Docusaurus MDX formatting with each topic in its own file and folder. Use consistent headings, diagrams, and code blocks, ensuring all examples reflect humanoid robotics context.
+### Color Theme
+Use a blue and white color theme throughout the frontend. Blue represents trust, stability, and technology while white provides clean, modern contrast. This color scheme must be applied consistently across all components, typography, and UI elements.
 
-### SpecKit Plus Alignment
-All work must follow the official phases: Constitution, Specification, Clarification, Planning, Tasks, and Implementation. Each phase must be completed fully before moving to the next.
+### Responsive Design
+The frontend must be responsive for both mobile and desktop devices. All components must adapt seamlessly to different screen sizes, maintaining usability and visual integrity across all viewports. Mobile-first approach is required for optimal performance.
 
-### Module Structure Adherence
-No deviation from the defined module structure with no unnecessary complexity in examples. All explanations must stay compatible with Gazebo and Unity simulation environments.
+### Mobile-First Development
+Prioritize mobile device experience during development. Start with mobile viewport constraints and progressively enhance for larger screens. This ensures optimal performance and user experience on the most constrained devices first.
 
-### Success Criteria Compliance
-Each topic must be explained with technical accuracy, proper simulation results, and visual fidelity with measurable outcomes, described in a way that a beginner can follow, and contain at least one real-world simulation example.
+### Cross-Browser Compatibility
+All frontend implementations must work consistently across modern browsers (Chrome, Firefox, Safari, Edge). Use progressive enhancement techniques and feature detection to ensure compatibility without sacrificing functionality.
 
-### Simulation & Physics Best Practices
-All implementations must follow simulation and physics best practices, using Gazebo and Unity effectively, adhering to best practices for gravity, collisions, and sensor simulations (LiDAR, Depth Cameras, IMUs) for humanoid robotics.
+### Performance Optimization
+Frontend assets must be optimized for fast loading times. Images should be properly sized and compressed, CSS/JS should be minified, and lazy loading should be implemented where appropriate to ensure smooth user experience.
 
-### Educational Accuracy
-Ensure all simulations and VSLAM demonstrations are technically correct and reproducible, with step-by-step instructions, professional diagrams, and beginner-friendly explanations for advanced robotics concepts.
+### Accessibility Standards
+All frontend components must meet WCAG 2.1 AA accessibility standards. Proper semantic HTML, ARIA labels, keyboard navigation, and color contrast ratios must be maintained to ensure inclusive user experience.
 
-### Hardware Acceleration
-Use NVIDIA Isaac Sim and Isaac ROS to leverage GPU-accelerated robotics computation, ensuring all implementations take advantage of hardware acceleration for optimal performance.
+### Visual Consistency
+Maintain consistent visual design patterns throughout the application. Typography, spacing, button styles, and interactive elements must follow a unified design system to create a cohesive user experience.
 
-### Path Planning Reliability
-Nav2 planning must demonstrate stable humanoid bipedal movement, with reliable path planning algorithms that work consistently in simulation environments.
+## Frontend Constraints
 
-### Voice-to-Action Accuracy
-OpenAI Whisper accurately converts voice commands to ROS 2 actions, ensuring reliable voice-to-action translation in the Vision-Language-Action module.
+All frontend implementations must be lightweight and efficient. No unnecessary dependencies or heavy frameworks that could impact performance. CSS should be modular and maintainable, with clear naming conventions.
 
-### Cognitive Planning
-LLMs translate natural language into safe and efficient action sequences, with cognitive planning that ensures actions are both safe and effective for humanoid robotics.
-
-### Capstone Integrity
-Autonomous humanoid completes complex tasks end-to-end in simulation, with the capstone demonstrating full integration of all learned concepts.
-
-## Module Constraints
-
-Implementation must fit into the book's 5-module architecture with minimal dependencies. No deviation from the defined module structure. No unnecessary complexity in examples. All explanations must stay compatible with Gazebo and Unity simulation environments.
-
-Hardware requirements: Minimum GPU support for Isaac Sim.
-ROS 2 Humble compatibility required.
-Must run within ROS 2 + simulation environment (Gazebo/Unity optional for sensor verification).
-LLM inference should be GPU-accelerated for real-time performance.
+Minimum supported screen size: 320px width (mobile)
+Maximum supported screen size: 4K displays (desktop)
+Target load time: Under 3 seconds on 3G connection
+Target interaction response: Under 100ms
 
 ## Development Workflow
 
-This module must follow the official phases: Constitution, Specification, Clarification, Planning, Tasks, and Implementation. Each phase will be completed fully before moving to the next. All work must align with the overall Physical AI book theme.
+This frontend must follow the official phases: Constitution, Specification, Clarification, Planning, Tasks, and Implementation. Each phase will be completed fully before moving to the next. All work must align with the overall Robotics-AI book frontend theme.
 
 ## Governance
 
-This Constitution establishes the quality standards, boundaries, and intentions that will govern Module 3: The AI-Robot Brain (NVIDIA Isaac™) and Module 4: Vision-Language-Action (VLA).
+This Constitution establishes the quality standards, boundaries, and intentions that will govern all frontend design and development for the Robotics-AI book project.
 
-Module 3 focuses on advanced perception and training using NVIDIA Isaac Sim and Isaac ROS to leverage GPU-accelerated robotics computation. The goal is to teach students advanced perception, VSLAM, and path planning with stable humanoid bipedal movement in simulation.
+The frontend focuses on creating an intuitive, responsive user interface that showcases AI and robotics concepts with a professional blue and white color theme. The design must be accessible, performant, and visually appealing across all device types.
 
-Module 4 focuses on integration of LLMs and robotics, teaching students how to translate voice commands into ROS 2 actions and use cognitive planning to create safe and efficient action sequences for autonomous humanoid robots completing complex tasks end-to-end in simulation.
+The implementation must prioritize user experience while maintaining technical excellence and following modern web development best practices.
 
-**Version**: 1.0.0 | **Ratified**: 2025-12-06 | **Last Amended**: 2025-12-07
+**Version**: 1.1.0 | **Ratified**: 2025-12-06 | **Last Amended**: 2025-12-08
