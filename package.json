@@ -11,7 +11,10 @@
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
-    "write-heading-ids": "docusaurus write-heading-ids"
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "test": "jest",
+    "tailwind": "npx tailwindcss -i ./src/css/input.css -o ./src/css/tailwind-output.css",
+    "tailwind:watch": "npx tailwindcss -i ./src/css/input.css -o ./src/css/tailwind-output.css --watch"
   },
   "dependencies": {
     "@docusaurus/core": "3.1.0",
@@ -23,8 +26,25 @@
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.1.0",
-    "@docusaurus/types": "3.1.0"
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "@babel/preset-react": "^7.28.5",
+    "@docusaurus/module-type-aliases": "^3.1.0",
+    "@docusaurus/plugin-content-pages": "^3.9.2",
+    "@docusaurus/types": "^3.1.0",
+    "@tailwindcss/cli": "^4.1.17",
+    "@tailwindcss/postcss": "^4.1.17",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "autoprefixer": "^10.4.22",
+    "babel-jest": "^30.2.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "jsdom": "^27.3.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.17"
   },
   "browserslist": {
     "production": [

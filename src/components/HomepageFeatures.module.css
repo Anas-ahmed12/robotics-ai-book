@@ -1,11 +1,131 @@
+/* =========================
+   FEATURES SECTION
+   ========================= */
 .features {
-  display: flex;
-  align-items: center;
-  padding: 2rem 0;
+  padding: 3rem 0;
   width: 100%;
 }
 
+/* Row */
+.features .row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* 🔹 IMPORTANT: gap on column (NOT on card) */
+.features :global(.col) {
+  margin-bottom: 1.5rem;   /* ✅ bottom gap FIXED */
+}
+
+/* =========================
+   FEATURE CARD
+   ========================= */
+.featureCard {
+  border: 3px solid #a1b1c4;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  transition: all 0.3s ease;
+  height: 100%;            /* equal height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  background: linear-gradient(90deg, #4b85bb, #5582c7, #4b8fbd);
+}
+
+/* Hover */
+.featureCard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(250, 204, 21, 0.15);
+  background: linear-gradient(90deg, #88b9e7, #668fcc, #8dc6ec);
+}
+
+/* =========================
+   IMAGE WRAPPER
+   ========================= */
+.featureImageWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+/* Image itself */
 .featureSvg {
-  height: 200px;
-  width: 200px;
+  width: 100%;            /* fill container width */
+  max-width: 300px;       /* locked max width for consistency */
+  height: 250px;          /* fixed height */
+  object-fit: cover;      /* fill box without distortion */
+  display: block;
+  border-radius: 12px;    /* rounded corners */
+}
+
+/* =========================
+   TITLE
+   ========================= */
+.featureCard h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  padding-top: 20px;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+/* =========================
+   DESCRIPTION
+   ========================= */
+.featureCard p {
+  font-size: 0.95rem;
+  line-height: 20px;
+  color: rgb(236, 225, 225);
+  text-align: center;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* =========================
+   SECTION HEADING + SUBHEADING
+   ========================= */
+.sectionHeading {
+  text-align: center;
+  font-size: 50px;
+  font-weight: 800;
+  color: #3e79d3;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.8rem; /* gap between heading and subtitle */
+}
+
+.sectionSubheading {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: #3876bd;
+  line-height: 1.6;
+  margin-bottom: 2.5rem; /* gap before boxes */
+  max-width: 600px; /* optional, control width */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Optional: subtle underline for heading */
+.sectionHeading::after {
+  content: "";
+  display: block;
+  width: 100px;
+  height: 5px;
+  background-color: #2871c5;
+  margin: 0.8rem auto 0 auto;
+  border-radius: 2px;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 996px) {
+  .featureSvg {
+    width: 80%;       /* responsive width */
+    max-width: 220px;
+    height: 160px;    /* scale down height */
+  }
 }

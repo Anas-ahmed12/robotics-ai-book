@@ -34,6 +34,19 @@ const config = {
     locales: ['en'],
   },
 
+  plugins: [
+    async function myPlugin(context, options) {
+      return {
+        name: 'docusaurus-tailwindcss',
+        configurePostCss(postcssOptions) {
+          // Return the altered config
+          postcssOptions.plugins.push(require('@tailwindcss/postcss'));
+          postcssOptions.plugins.push(require('autoprefixer'));
+          return postcssOptions;
+        },
+      };
+    },
+  ],
   presets: [
     [
       'classic',
@@ -52,7 +65,6 @@ const config = {
       }),
     ],
   ],
-
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
@@ -62,14 +74,15 @@ const config = {
         title: 'Robotics AI Book',
         logo: {
           alt: 'Robotics AI Book Logo',
-          src: 'img/logo.svg',
+          src: 'img/logo2.png',
+          
         },
         items: [
           {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
-            label: 'Tutorial',
+            label: 'Textbook',
           },
           {
             href: 'https://github.com/your-org-name/robotics-ai-book',
@@ -85,7 +98,7 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Tutorial',
+                label: 'TextBook',
                 to: '/docs/intro',
               },
             ],

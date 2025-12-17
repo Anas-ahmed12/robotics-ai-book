@@ -1,0 +1,39 @@
+# Header Component Interface Contract
+
+## Component: Header
+
+### Props Interface
+```javascript
+interface HeaderProps {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  ctaText?: string;
+  ctaUrl?: string;
+  imageSrc?: string; // default: "/img/robotics.png"
+  imageAlt?: string; // default: "Robotics AI Book"
+}
+```
+
+### Component Contract
+- **Input**: HeaderProps object with optional configuration
+- **Output**: ReactElement rendering the header with two sections
+- **Side Effects**: None (pure component)
+- **Dependencies**: React, Tailwind CSS classes
+
+### Function Signatures
+```javascript
+function Header(props: HeaderProps): ReactElement
+```
+
+### Expected Behaviors
+1. **Layout**: Always renders two portions - left content and right image
+2. **Responsiveness**: Adapts layout based on screen size (mobile-first)
+3. **Accessibility**: Includes proper semantic HTML and ARIA attributes
+4. **Styling**: Applies blue and white color theme consistently
+5. **Interactions**: CTA button has hover effect as specified
+
+### Error Handling
+- If image fails to load, display alt text as fallback
+- If no content is provided, render minimal header with just the image
+- Validate prop types to prevent runtime errors

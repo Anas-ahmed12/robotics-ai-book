@@ -1,30 +1,127 @@
-/**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
- */
-
-/* You can override the default Infima variables here. */
-:root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+/* Header container */
+.header-container {
+  background: linear-gradient(90deg, #3a6e9e, #668fcc, #4199d4);
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+  box-sizing: border-box;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+/* Flex wrapper for left and right */
+.header-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  width: 100%;
+  gap: 60px;
+}
+
+/* Left content */
+.header-left {
+  flex: 1;
+}
+
+.header-title {
+  font-size: 45px;
+  font-weight: 800;
+  color: rgb(255, 255, 255);
+  margin-bottom: 0px;
+  margin-top: -60px;
+}
+
+.header-subtitle {
+  font-size: 20px;
+  color: #dbeafe;
+  margin-bottom: 30px;
+}
+
+.header-description {
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #e7e7e7;
+  line-height: 1.3;
+}
+
+/* Button styling */
+.header-button {
+  display: inline-block;
+  background-color: #fff;
+  color: #1e40af;
+  font-weight: bold;
+  padding: 12px 25px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.header-button:hover {
+  background-color: #e0e7ff;
+  color: #1e3a8a;
+}
+
+/* Right image */
+.header-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.header-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 30px;
+}
+
+/* Responsive: Stack on small screens */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .header-right {
+    margin-top: 30px;
+  }
+}
+
+/* LOGO */
+
+/* Navbar logo size */
+.navbar__logo img {
+  margin-top: -7px;
+  height: 45px;      /* default ~32px hota hai */
+  width: auto;       /* aspect ratio safe */
+}
+
+.navbar {
+  background: linear-gradient(90deg, #5e99d1, #668fcc, #87b7d8);
+ 
+}
+
+.navbar__title{
+  color: rgb(255, 255, 255);
+
+}
+.navbar__link {
+  color: #ffffff !important;
+}
+/* Active link */
+.navbar__link--active {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+.navbar__link:hover {
+  color: #0f3764 !important;
+}
+.navbar__toggle {
+  color: #ffffff !important;
+}
+
+.navbar__item svg {
+  fill: #ffffff !important;
 }
