@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robotics-AI Book RAG Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        #chat-container {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Robotics-AI Book Assistant</h1>
+        <div id="chat-container"></div>
+    </div>
+
+    <script>
+        // Initialize the RAG Chatbot when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.RAGChatbot) {
+                // Initialize the chat component
+                const chat = window.RAGChatbot.init({
+                    containerId: 'chat-container',
+                    backendUrl: 'http://localhost:8000/api/v1/chat',
+                    theme: 'blue-white',
+                    maxHistory: 100,
+                    enableTextSelection: true,
+                    defaultOpen: true
+                });
+
+                if (chat) {
+                    console.log('RAG Chatbot initialized successfully');
+                } else {
+                    console.error('Failed to initialize RAG Chatbot');
+                }
+            } else {
+                console.error('RAGChatbot namespace not available');
+            }
+        });
+    </script>
+</body>
+</html>

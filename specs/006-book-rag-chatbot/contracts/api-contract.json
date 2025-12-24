@@ -1,0 +1,203 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "RAG Chatbot API",
+    "version": "1.0.0",
+    "description": "API contract for RAG chatbot frontend integration"
+  },
+  "paths": {
+    "/api/chat": {
+      "post": {
+        "summary": "Process a user query with optional context",
+        "description": "Sends a user query to the RAG system with optional selected text context",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["query"],
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "The user's question",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  },
+                  "session_id": {
+                    "type": "string",
+                    "description": "The current session identifier",
+                    "pattern": "^[a-zA-Z0-9-_]+$",
+                    "maxLength": 100
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "selected_text": {
+                        "type": "string",
+                        "description": "Text selected by user from the book",
+                        "minLength": 1,
+                        "maxLength": 1000
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              },
+              "example": {
+                "query": "What is the difference between forward and inverse kinematics?",
+                "session_id": "session-12345-abcde",
+                "context": {
+                  "selected_text": "Kinematics is the study of motion without considering the forces that cause it."
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response from the chatbot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["response", "sources", "query_id", "response_id", "confidence_score"],
+                  "properties": {
+                    "response": {
+                      "type": "string",
+                      "description": "The agent's response to the query",
+                      "minLength": 1,
+                      "maxLength": 10000
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": ["id", "content", "similarity_score"],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique identifier for the source"
+                          },
+                          "content": {
+                            "type": "string",
+                            "description": "The content of the retrieved source"
+                          },
+                          "similarity_score": {
+                            "type": "number",
+                            "description": "Similarity score between 0 and 1",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "metadata": {
+                            "type": "object",
+                            "description": "Additional metadata about the source"
+                          }
+                        }
+                      }
+                    },
+                    "query_id": {
+                      "type": "string",
+                      "description": "Unique identifier for the query"
+                    },
+                    "response_id": {
+                      "type": "string",
+                      "description": "Unique identifier for the response"
+                    },
+                    "confidence_score": {
+                      "type": "number",
+                      "description": "Confidence level of the response",
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "example": {
+                  "response": "Forward kinematics calculates the position of the end-effector given joint angles, while inverse kinematics calculates the required joint angles to achieve a desired end-effector position.",
+                  "sources": [
+                    {
+                      "id": "doc-123",
+                      "content": "Forward kinematics is the process of calculating the position and orientation of the end-effector based on the joint angles.",
+                      "similarity_score": 0.85,
+                      "metadata": {
+                        "source_url": "https://robotics-book/page/kinematics"
+                      }
+                    }
+                  ],
+                  "query_id": "query-67890-xyz",
+                  "response_id": "resp-54321-abc",
+                  "confidence_score": 0.92
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid query format or content exceeding limits",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["detail"],
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "description": "Error message explaining what went wrong"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "example": {
+                  "detail": "Query too long, maximum 2000 characters allowed"
+                }
+              }
+            }
+          },
+          "408": {
+            "description": "Request timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["detail"],
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "description": "Error message explaining the timeout"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "example": {
+                  "detail": "Request timed out after 30 seconds"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["detail"],
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "description": "Error message explaining the server error"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "example": {
+                  "detail": "Internal server error: Unable to process request"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

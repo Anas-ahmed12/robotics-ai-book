@@ -47,6 +47,9 @@ const config = {
       };
     },
   ],
+  clientModules: [
+    require.resolve('./src/client-modules/chatbot-injector.js'),
+  ],
   presets: [
     [
       'classic',
@@ -57,7 +60,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/your-org-name/robotics-ai-book/edit/main/',
+            'https://github.com/Anas-ahmed12/robotics-ai-book/edit/main/',
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -85,7 +88,7 @@ const config = {
             label: 'Textbook',
           },
           {
-            href: 'https://github.com/your-org-name/robotics-ai-book',
+            href: 'https://github.com/Anas-ahmed12',
             label: 'GitHub',
             position: 'right',
           },
@@ -125,7 +128,7 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/your-org-name/robotics-ai-book',
+                href: 'https://github.com/Anas-ahmed12',
               },
             ],
           },

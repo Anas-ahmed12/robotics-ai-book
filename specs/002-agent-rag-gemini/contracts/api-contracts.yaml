@@ -1,0 +1,530 @@
+# API Contracts: Agent-Based RAG Chatbot with Google Gemini
+
+## OpenAPI Specification
+
+```yaml
+openapi: 3.0.3
+info:
+  title: Agent-Based RAG Chatbot API
+  description: API for interacting with the agent-based RAG chatbot using Google Gemini as the LLM
+  version: 1.0.0
+  contact:
+    name: Robotics AI Book Team
+    email: team@robotics-ai-book.com
+
+servers:
+  - url: http://localhost:8000
+    description: Development server
+  - url: https://api.robotics-ai-book.com
+    description: Production server
+
+paths:
+  /api/v1/chat:
+    post:
+      summary: Send a query to the agent-based RAG system
+      description: Process a user query through the agent system which will use retrieval tools and Google Gemini to generate a response
+      operationId: chat
+      tags:
+        - chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+            examples:
+              basic_query:
+                summary: Basic query example
+                value:
+                  query: "Explain how ROS 2 differs from ROS 1"
+              with_session:
+                summary: Query with session ID
+                value:
+                  query: "What did I ask about earlier?"
+                  session_id: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+      responses:
+        '200':
+          description: Successful response from the agent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+              examples:
+                success_response:
+                  summary: Successful response example
+                  value:
+                    id: "resp_1234567890"
+                    content: "ROS 2 differs from ROS 1 in several key ways..."
+                    query_id: "query_a1b2c3d4"
+                    session_id: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+                    retrieved_context:
+                      - content: "ROS 2 uses DDS for communication instead of custom TCP/UDP protocols"
+                        source: "ros2_documentation.pdf"
+                        similarity_score: 0.92
+                    tool_calls:
+                      - name: "retrieval_tool"
+                        parameters: {"query": "ROS 2 vs ROS 1 differences"}
+                        result: "Retrieved 3 relevant documents"
+                    status: "success"
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Request timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/chat/session:
+    post:
+      summary: Create a new agent session
+      description: Initialize a new session for maintaining conversation context
+      operationId: createSession
+      tags:
+        - session
+      responses:
+        '201':
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/chat/session/{session_id}:
+    get:
+      summary: Get session details
+      description: Retrieve information about a specific agent session
+      operationId: getSession
+      tags:
+        - session
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier for the session
+      responses:
+        '200':
+          description: Session details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionDetailsResponse'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/health:
+    get:
+      summary: Health check endpoint
+      description: Check the health status of the agent-based RAG system
+      operationId: healthCheck
+      tags:
+        - health
+      responses:
+        '200':
+          description: System is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '500':
+          description: System is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+components:
+  schemas:
+    ChatRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          description: The user query to be processed by the agent
+          example: "Explain how reinforcement learning works in robotics"
+          minLength: 1
+          maxLength: 10000
+        session_id:
+          type: string
+          description: Optional session ID to maintain conversation context
+          format: uuid
+          example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+        timeout:
+          type: integer
+          description: Optional timeout in seconds for the request
+          minimum: 1
+          maximum: 300
+          default: 60
+
+    ChatResponse:
+      type: object
+      required:
+        - id
+        - content
+        - query_id
+        - session_id
+        - status
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the response
+          example: "resp_1234567890"
+        content:
+          type: string
+          description: The agent-generated response content
+          example: "Reinforcement learning in robotics involves..."
+        query_id:
+          type: string
+          description: Reference to the original query
+          example: "query_a1b2c3d4"
+        session_id:
+          type: string
+          description: Reference to the agent session
+          example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+        retrieved_context:
+          type: array
+          description: List of context chunks used in generating the response
+          items:
+            $ref: '#/components/schemas/RetrievalResult'
+        tool_calls:
+          type: array
+          description: List of tools called during response generation
+          items:
+            $ref: '#/components/schemas/ToolCall'
+        status:
+          type: string
+          description: Status of the response generation
+          enum: [success, partial, failed]
+          example: "success"
+        timestamp:
+          type: string
+          format: date-time
+          description: When the response was generated
+          example: "2025-12-18T10:30:00Z"
+
+    SessionResponse:
+      type: object
+      required:
+        - id
+        - created_at
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the session
+          format: uuid
+          example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+        created_at:
+          type: string
+          format: date-time
+          description: When the session was created
+          example: "2025-12-18T10:00:00Z"
+        timeout_config:
+          $ref: '#/components/schemas/TimeoutConfig'
+
+    SessionDetailsResponse:
+      type: object
+      required:
+        - id
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the session
+          format: uuid
+          example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+        created_at:
+          type: string
+          format: date-time
+          description: When the session was created
+          example: "2025-12-18T10:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: When the session was last updated
+          example: "2025-12-18T10:30:00Z"
+        conversation_history:
+          type: array
+          description: List of query-response pairs in the session
+          items:
+            $ref: '#/components/schemas/ConversationItem'
+        current_state:
+          type: object
+          description: Current state of the agent's reasoning process
+          example: {"current_step": "retrieval", "plan": "answer query with retrieved context"}
+
+    ConversationItem:
+      type: object
+      properties:
+        query:
+          type: string
+          description: The original user query
+          example: "What is ROS 2?"
+        response:
+          type: string
+          description: The agent-generated response
+          example: "ROS 2 is the next generation of the Robot Operating System..."
+        timestamp:
+          type: string
+          format: date-time
+          description: When this conversation item was created
+          example: "2025-12-18T10:15:00Z"
+
+    RetrievalResult:
+      type: object
+      required:
+        - content
+        - source
+        - similarity_score
+      properties:
+        content:
+          type: string
+          description: The retrieved text content
+          example: "ROS 2 uses DDS for communication instead of custom TCP/UDP protocols"
+        source:
+          type: string
+          description: Source document or reference
+          example: "ros2_documentation.pdf"
+        similarity_score:
+          type: number
+          description: Similarity score from vector search (0.0 to 1.0)
+          minimum: 0.0
+          maximum: 1.0
+          example: 0.92
+        metadata:
+          type: object
+          description: Additional metadata from Qdrant
+          example: {"page": 15, "section": "Communication"}
+
+    ToolCall:
+      type: object
+      required:
+        - name
+        - parameters
+        - result
+      properties:
+        name:
+          type: string
+          description: Name of the tool that was invoked
+          example: "retrieval_tool"
+        parameters:
+          type: object
+          description: Parameters passed to the tool
+          example: {"query": "ROS 2 vs ROS 1 differences", "top_k": 3}
+        result:
+          type: object
+          description: Result returned by the tool
+          example: {"retrieved_count": 3, "documents": ["doc1", "doc2", "doc3"]}
+        status:
+          type: string
+          description: Status of the tool call
+          enum: [success, failed, timeout]
+          example: "success"
+        execution_duration:
+          type: number
+          description: Time taken to execute the tool call in seconds
+          example: 0.25
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: "BAD_REQUEST"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Query must not be empty"
+        details:
+          type: object
+          description: Additional error details
+          example: {"field": "query", "reason": "must not be empty"}
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+          example: "healthy"
+        details:
+          type: object
+          description: Additional health details
+          example: {"gemini_api": "connected", "qdrant": "connected", "agent_service": "operational"}
+
+    TimeoutConfig:
+      type: object
+      properties:
+        max_execution_time:
+          type: integer
+          description: Maximum time allowed for agent execution in seconds
+          default: 60
+        tool_call_timeout:
+          type: integer
+          description: Maximum time allowed for individual tool calls in seconds
+          default: 30
+```
+
+## GraphQL Schema (Alternative)
+
+```graphql
+# Scalar types
+scalar DateTime
+scalar UUID
+
+# Input types
+input ChatInput {
+  query: String!
+  session_id: UUID
+  timeout: Int
+}
+
+# Response types
+type ChatResponse {
+  id: ID!
+  content: String!
+  query_id: ID!
+  session_id: UUID!
+  retrieved_context: [RetrievalResult!]!
+  tool_calls: [ToolCall!]!
+  status: ResponseStatus!
+  timestamp: DateTime!
+}
+
+type RetrievalResult {
+  content: String!
+  source: String!
+  similarity_score: Float!
+  metadata: JSON
+}
+
+type ToolCall {
+  name: String!
+  parameters: JSON!
+  result: JSON!
+  status: ToolCallStatus!
+  execution_duration: Float
+}
+
+enum ResponseStatus {
+  SUCCESS
+  PARTIAL
+  FAILED
+}
+
+enum ToolCallStatus {
+  SUCCESS
+  FAILED
+  TIMEOUT
+}
+
+type Session {
+  id: UUID!
+  created_at: DateTime!
+  updated_at: DateTime!
+  conversation_history: [ConversationItem!]!
+  current_state: JSON
+}
+
+type ConversationItem {
+  query: String!
+  response: String!
+  timestamp: DateTime!
+}
+
+type HealthStatus {
+  status: HealthStatusEnum!
+  details: JSON
+}
+
+enum HealthStatusEnum {
+  HEALTHY
+  DEGRADED
+  UNHEALTHY
+}
+
+# Query types
+type Query {
+  getSession(session_id: UUID!): Session
+  health: HealthStatus!
+}
+
+# Mutation types
+type Mutation {
+  chat(input: ChatInput!): ChatResponse!
+  createSession: Session!
+}
+
+# JSON scalar for flexible data
+scalar JSON
+```
+
+## Functional Requirements Mapping
+
+The API contracts implement the following functional requirements from the spec:
+
+- **FR-001**: System MUST implement agent orchestration using OpenAI SDK-style abstractions
+  - Implemented through the `/api/v1/chat` endpoint that orchestrates agent processing
+
+- **FR-002**: System MUST allow the agent to manage reasoning and tool invocation processes
+  - Implemented through the `tool_calls` field in the response showing agent tool invocations
+
+- **FR-003**: System MUST implement retrieval as a Tool callable by the agent
+  - Implemented through the `retrieval_tool` shown in tool call examples
+
+- **FR-004**: System MUST configure the retrieval tool to query Qdrant vector database
+  - Implemented through the `retrieved_context` field showing Qdrant results
+
+- **FR-005**: System MUST use Google Gemini as the LLM backend accessed via OpenAI-compatible interface
+  - Backend implementation handles Gemini integration (contract shows response format)
+
+- **FR-006**: System MUST make the Gemini API key configurable via environment variables
+  - Configuration handled at the service level, not exposed in API contracts
+
+- **FR-007**: System MUST provide FastAPI endpoints that invoke the agent (not raw LLM calls)
+  - Implemented through the `/api/v1/chat` endpoint that invokes the agent
+
+- **FR-008**: System MUST implement proper error handling and logging mechanisms
+  - Implemented through comprehensive error response definitions
+
+- **FR-009**: System MUST implement timeout mechanisms to prevent hanging requests
+  - Implemented through the `timeout` parameter in the request and timeout configurations
+
+- **FR-010**: System MUST validate user input and return appropriate error messages for invalid requests
+  - Implemented through request validation schemas and error response definitions
