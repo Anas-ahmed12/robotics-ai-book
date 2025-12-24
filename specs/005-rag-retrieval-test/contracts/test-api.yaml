@@ -1,0 +1,144 @@
+# API Contract: RAG Retrieval Testing Service
+
+## Overview
+This contract defines the interface for the RAG retrieval pipeline testing service. The service allows developers and technical reviewers to execute test queries against the Qdrant vector database, validate retrieval results, and generate test reports.
+
+## Base URL
+`http://localhost:8000/api/v1` (or as configured)
+
+## Authentication
+All endpoints require authentication using the same method as the Qdrant database (API key or other authentication mechanism).
+
+## Endpoints
+
+### POST /test-query
+Execute a single test query against the retrieval pipeline.
+
+#### Request
+```json
+{
+  "query_text": "What is ROS2?",
+  "collection_name": "robotics_embeddings",
+  "limit": 5,
+  "relevance_threshold": 0.7
+}
+```
+
+#### Response
+```json
+{
+  "test_id": "test_12345",
+  "query": {
+    "query_text": "What is ROS2?",
+    "timestamp": "2025-12-18T10:30:00Z"
+  },
+  "results": [
+    {
+      "content_id": "doc_001",
+      "content_text": "ROS2 (Robot Operating System 2) is a set of libraries and tools...",
+      "relevance_score": 0.85,
+      "content_domain": "robotics",
+      "vector_id": "vec_123"
+    }
+  ],
+  "execution_time_ms": 1250,
+  "relevant_results_count": 3,
+  "total_results_count": 5,
+  "relevance_percentage": 60.0,
+  "status": "success",
+  "anomalies": []
+}
+```
+
+#### Error Response
+```json
+{
+  "error": "string",
+  "details": "string"
+}
+```
+
+### POST /run-test-suite
+Execute a comprehensive test suite with multiple queries.
+
+#### Request
+```json
+{
+  "test_queries": [
+    "What is ROS2?",
+    "Explain reinforcement learning in robotics",
+    "How does computer vision work in autonomous robots?"
+  ],
+  "collection_name": "robotics_embeddings",
+  "limit": 5,
+  "relevance_threshold": 0.7
+}
+```
+
+#### Response
+```json
+{
+  "execution_id": "exec_67890",
+  "start_time": "2025-12-18T10:30:00Z",
+  "end_time": "2025-12-18T10:35:00Z",
+  "queries_executed": 3,
+  "queries_passed": 2,
+  "average_response_time": 1.25,
+  "relevance_accuracy": 73.3,
+  "test_results": [
+    {
+      "test_id": "test_12345",
+      "query": {
+        "query_text": "What is ROS2?",
+        "timestamp": "2025-12-18T10:30:00Z"
+      },
+      "results": [...],
+      "execution_time_ms": 1250,
+      "relevant_results_count": 3,
+      "total_results_count": 5,
+      "relevance_percentage": 60.0,
+      "status": "success",
+      "anomalies": []
+    }
+  ],
+  "summary_report": "# Test Execution Summary\n..."
+}
+```
+
+### GET /test-executions/{execution_id}
+Retrieve details of a specific test execution.
+
+#### Response
+Same as the test suite response above.
+
+### GET /test-executions
+List recent test executions.
+
+#### Response
+```json
+{
+  "executions": [
+    {
+      "execution_id": "exec_67890",
+      "start_time": "2025-12-18T10:30:00Z",
+      "end_time": "2025-12-18T10:35:00Z",
+      "queries_executed": 3,
+      "relevance_accuracy": 73.3,
+      "status": "completed"
+    }
+  ]
+}
+```
+
+## Error Codes
+- `400 Bad Request`: Invalid request parameters
+- `401 Unauthorized`: Authentication failed
+- `404 Not Found`: Test execution not found
+- `500 Internal Server Error`: Server-side error during testing
+- `503 Service Unavailable`: Qdrant database unavailable
+
+## Data Validation
+- Query text must be 1-500 characters
+- Relevance threshold must be between 0.0 and 1.0
+- Limit must be between 1 and 100
+- Collection name must exist in Qdrant

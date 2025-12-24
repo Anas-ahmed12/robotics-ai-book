@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir C:UsersHPDesktoprobotics-ai-bookbackend)",
+      "Bash(.specify/scripts/powershell/check-prerequisites.ps1 -Json -PathsOnly)",
+      "Bash(.specify/scripts/powershell/check-prerequisites.ps1 -Json)",
+      "Bash(.specify/scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks)",
+      "Bash(ls history/prompts/002-agent-rag-gemini/*plan*)",
+      "Bash(find backend -type f -name \"*.py\" ! -path \"*/.venv/*\" -exec grep -l \"FastAPI\\|APIRouter\\|@app\\|@router\" {} ;)",
+      "Bash(mkdir -p \"C:/Users/HP/Desktop/robotics-ai-book/backend/src/agents\")"
+    ]
+  }
+}

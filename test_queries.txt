@@ -1,0 +1,10 @@
+What is a robot operating system?
+Explain reinforcement learning in robotics
+How does computer vision work in autonomous robots?
+What are the key features of ROS2?
+Describe path planning algorithms
+What is the difference between forward and inverse kinematics?
+How do robots perceive their environment?
+What are the main components of a robotic system?
+Explain the concept of robot navigation
+What is sensor fusion in robotics?

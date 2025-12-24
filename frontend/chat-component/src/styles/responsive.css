@@ -1,0 +1,219 @@
+/* Responsive styles for the RAG Chatbot component with book integration */
+
+/* Mobile-first responsive styles */
+.rag-chat-container {
+  height: 400px;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 0; /* No border radius on mobile for full screen width */
+}
+
+.rag-chat-header {
+  padding: 10px 14px;
+  font-size: 15px;
+}
+
+.rag-chat-messages {
+  padding: 12px;
+}
+
+.rag-message-bubble {
+  max-width: 90%; /* Wider on mobile */
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.rag-message-content {
+  font-size: 14px;
+}
+
+.rag-chat-input-container {
+  flex-direction: column;
+  padding: 10px;
+}
+
+.rag-chat-input {
+  margin-bottom: 8px;
+}
+
+.rag-chat-submit-btn {
+  align-self: stretch; /* Full width on mobile */
+  padding: 12px;
+}
+
+/* Tablet styles */
+@media (min-width: 768px) {
+  .rag-chat-container {
+    height: 450px;
+    max-width: 500px;
+    border-radius: 8px;
+    margin: 0 auto; /* Center the chat on larger screens */
+  }
+
+  .rag-chat-input-container {
+    flex-direction: row;
+    padding: 12px;
+  }
+
+  .rag-chat-input {
+    margin-bottom: 0;
+  }
+
+  .rag-chat-submit-btn {
+    align-self: flex-end;
+    width: auto;
+  }
+
+  .rag-message-bubble {
+    max-width: 85%;
+    padding: 10px 14px;
+  }
+
+  .rag-message-content {
+    font-size: 14px;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+  .rag-chat-container {
+    height: 500px;
+  }
+
+  .rag-message-bubble {
+    max-width: 80%;
+  }
+}
+
+/* Large desktop styles */
+@media (min-width: 1280px) {
+  .rag-chat-container {
+    max-width: 600px;
+  }
+}
+
+/* Book-specific responsive adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet-sized book pages */
+  .book-content .rag-chat-container {
+    max-width: 650px;
+    margin: 1.5rem auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Desktop book pages */
+  .book-content .rag-chat-container {
+    max-width: 700px;
+    margin: 2rem auto;
+  }
+}
+
+/* Accessibility enhancements */
+@media (prefers-reduced-motion: reduce) {
+  .rag-message-bubble {
+    animation: none;
+  }
+
+  .rag-loading-spinner {
+    animation: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .rag-chat-container {
+    border: 2px solid;
+  }
+
+  .rag-message-user {
+    border: 1px solid;
+  }
+
+  .rag-message-agent {
+    border: 1px solid;
+  }
+}
+
+/* Orientation changes for mobile */
+@media (orientation: landscape) and (max-height: 500px) {
+  .rag-chat-container {
+    height: 300px;
+  }
+
+  .rag-message-bubble {
+    max-width: 85%;
+    font-size: 13px;
+  }
+
+  .rag-message-content {
+    font-size: 13px;
+  }
+}
+
+/* Touch-friendly adjustments */
+@media (hover: none) and (pointer: coarse) {
+  .rag-chat-submit-btn {
+    padding: 14px; /* Larger touch target */
+  }
+}
+
+/* Print styles */
+@media print {
+  .rag-chat-container {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+
+  .rag-chat-input-container {
+    display: none;
+  }
+
+  .rag-loading-indicator,
+  .rag-error-message {
+    display: none;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .rag-message-bubble {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Dark mode support (if needed in the future) */
+@media (prefers-color-scheme: dark) {
+  .rag-chat-container {
+    background-color: #1e293b;
+    color: #e2e8f0;
+  }
+
+  .rag-chat-header {
+    background-color: #3730a3;
+  }
+
+  .rag-message-user {
+    background-color: #3b82f6;
+    color: #f8fafc;
+  }
+
+  .rag-message-agent {
+    background-color: #1e40af;
+    color: #e0f2fe;
+  }
+}
+
+/* Book content integration at different screen sizes */
+@media (min-width: 1200px) {
+  .book-content .rag-chat-container:not(.book-layout) {
+    max-width: 600px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .book-content .rag-chat-container:not(.book-layout) {
+    max-width: 700px;
+  }
+}

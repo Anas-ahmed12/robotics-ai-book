@@ -1,0 +1,236 @@
+openapi: 3.0.0
+info:
+  title: Knowledge Base Chatbot API
+  description: API for interacting with the knowledge base chatbot using RAG (Retrieval-Augmented Generation)
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Development server
+  - url: https://api.example.com
+    description: Production server
+
+paths:
+  /chat:
+    post:
+      summary: Process a user query and return a response
+      description: Sends a user query to the chatbot and receives a response with relevant information from the knowledge base
+      operationId: chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Successful response from the chatbot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - Chat
+
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the service and its dependencies
+      operationId: health
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Service is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+      tags:
+        - Health
+
+components:
+  schemas:
+    ChatRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          description: The user query text
+          example: "What are the key principles of robotics?"
+        session_id:
+          type: string
+          description: Session identifier for conversation context
+          example: "sess_123456789"
+        user_id:
+          type: string
+          description: User identifier
+          example: "user_987654321"
+        temperature:
+          type: number
+          description: Temperature parameter for response generation (0.0 to 1.0)
+          minimum: 0.0
+          maximum: 1.0
+          example: 0.7
+      example:
+        query: "What are the key principles of robotics?"
+        session_id: "sess_123456789"
+        temperature: 0.7
+
+    ChatResponse:
+      type: object
+      required:
+        - response
+        - sources
+        - query_id
+        - response_id
+        - confidence_score
+      properties:
+        response:
+          type: string
+          description: The chatbot response
+          example: "The key principles of robotics include sensing, planning, and actuation..."
+        sources:
+          type: array
+          description: List of sources used to generate the response
+          items:
+            $ref: '#/components/schemas/Source'
+        query_id:
+          type: string
+          description: ID of the original query
+          example: "query_111111111"
+        response_id:
+          type: string
+          description: ID of the generated response
+          example: "resp_222222222"
+        confidence_score:
+          type: number
+          description: Confidence score for the response
+          minimum: 0.0
+          maximum: 1.0
+          example: 0.92
+      example:
+        response: "The key principles of robotics include sensing, planning, and actuation..."
+        sources:
+          - id: "kb_001"
+            content: "Robotics is an interdisciplinary branch of engineering and science that includes mechanical engineering, electrical engineering, computer science, and others..."
+            similarity_score: 0.87
+            metadata:
+              title: "Introduction to Robotics"
+              author: "John Doe"
+              date: "2023-01-15"
+        query_id: "query_111111111"
+        response_id: "resp_222222222"
+        confidence_score: 0.92
+
+    Source:
+      type: object
+      required:
+        - id
+        - content
+        - similarity_score
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the source
+          example: "kb_001"
+        content:
+          type: string
+          description: The actual content from the knowledge base
+          example: "Robotics is an interdisciplinary branch of engineering and science that includes mechanical engineering, electrical engineering, computer science, and others..."
+        similarity_score:
+          type: number
+          description: Similarity score to the original query
+          minimum: 0.0
+          maximum: 1.0
+          example: 0.87
+        metadata:
+          type: object
+          description: Additional metadata about the source
+          additionalProperties: true
+          example:
+            title: "Introduction to Robotics"
+            author: "John Doe"
+            date: "2023-01-15"
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: "BAD_REQUEST"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Query field is required"
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          description: Overall system status
+          enum: [healthy, degraded, unhealthy]
+          example: "healthy"
+        timestamp:
+          type: string
+          format: date-time
+          description: When the health check was performed
+          example: "2023-12-18T10:00:00Z"
+        services:
+          type: object
+          description: Status of individual services
+          additionalProperties:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [up, down]
+              response_time:
+                type: number
+                description: Response time in milliseconds
+          example:
+            qdrant:
+              status: up
+              response_time: 45
+            openai:
+              status: up
+              response_time: 120
+        version:
+          type: string
+          description: Application version
+          example: "1.0.0"
+
+tags:
+  - name: Chat
+    description: Chatbot interaction endpoints
+  - name: Health
+    description: Health and status check endpoints
