@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Chatbot.css';
 
 const Chatbot = () => {
+  // Check if we're in the browser environment
+  const isBrowser = typeof window !== 'undefined';
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
@@ -9,14 +12,19 @@ const Chatbot = () => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Function to get selected text from the page
+  // Function to get selected text from the page (only in browser)
   const getSelectedText = () => {
-    const selectedText = window.getSelection().toString().trim();
-    return selectedText;
+    if (isBrowser && window.getSelection) {
+      const selectedText = window.getSelection().toString().trim();
+      return selectedText;
+    }
+    return '';
   };
 
-  // Add event listener for text selection
+  // Add event listener for text selection (only in browser)
   useEffect(() => {
+    if (!isBrowser || !document) return;
+
     const handleSelection = () => {
       setTimeout(() => {
         const selected = getSelectedText();
@@ -37,18 +45,23 @@ const Chatbot = () => {
     return () => {
       document.removeEventListener('mouseup', handleSelection);
     };
-  }, []);
+  }, [isBrowser]);
 
   // Scroll to bottom of messages
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (isBrowser) {
+      scrollToBottom();
+    }
+  }, [messages, isBrowser]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (isBrowser && messagesEndRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const toggleChat = () => {
+    if (!isBrowser) return;
     setIsOpen(!isOpen);
     if (!isOpen && inputRef.current) {
       setTimeout(() => {
@@ -58,7 +71,7 @@ const Chatbot = () => {
   };
 
   const sendMessage = async () => {
-    if (!inputValue.trim() || isLoading) return;
+    if (!inputValue.trim() || isLoading || !isBrowser) return;
 
     const userMessage = {
       id: Date.now(),
@@ -78,32 +91,44 @@ const Chatbot = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8001/api/v1/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: originalInputValue, // Use the original value that was sent
-          session_id: 'docusaurus-chat-session', // Use a fixed session ID for the session
-        }),
-      });
+      // Only make fetch request in browser environment
+      if (isBrowser) {
+        const response = await fetch('http://localhost:8001/api/v1/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: originalInputValue, // Use the original value that was sent
+            session_id: 'docusaurus-chat-session', // Use a fixed session ID for the session
+          }),
+        });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        const botMessage = {
+          id: Date.now() + 1,
+          text: data.response,
+          sender: 'bot',
+          sources: data.sources || [],
+          timestamp: new Date().toISOString(),
+        };
+
+        setMessages(prev => [...prev, botMessage]);
+      } else {
+        // Fallback for SSR
+        const botMessage = {
+          id: Date.now() + 1,
+          text: 'Chat functionality is only available in the browser.',
+          sender: 'bot',
+          timestamp: new Date().toISOString(),
+        };
+        setMessages(prev => [...prev, botMessage]);
       }
-
-      const data = await response.json();
-
-      const botMessage = {
-        id: Date.now() + 1,
-        text: data.response,
-        sender: 'bot',
-        sources: data.sources || [],
-        timestamp: new Date().toISOString(),
-      };
-
-      setMessages(prev => [...prev, botMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage = {
@@ -128,13 +153,20 @@ const Chatbot = () => {
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      sendMessage();
+      if (isBrowser) {
+        sendMessage();
+      }
     }
   };
 
   const clearChat = () => {
     setMessages([]);
   };
+
+  // Don't render anything during SSR
+  if (!isBrowser) {
+    return null;
+  }
 
   return (
     <>
