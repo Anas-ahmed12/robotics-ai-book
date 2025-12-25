@@ -1,11 +1,15 @@
 import React from "react";
 import clsx from "clsx";
 import styles from "./HomepageFeatures.module.css";
+import module1Image from "@site/static/img/module1.png";
+import module5Image from "@site/static/img/module5.png";
+import module3Image from "@site/static/img/module3.png";
+import module4Image from "@site/static/img/module4.png";
 
 const FeatureList = [
   {
     title: "The Robotic Nervous System (ROS 2)",
-    Image: require("@site/static/img/module1.png").default,
+    Image: module1Image,
     description: (
       <>
         Get started with ROS 2, the backbone of modern robotic control. Learn to
@@ -16,7 +20,7 @@ const FeatureList = [
   },
   {
     title: "Advanced Robot Control & ROS 2 Integration",
-    Image: require("@site/static/img/module5.png").default,
+    Image: module5Image,
     description: (
       <>
         Dive into advanced robot control using ROS 2. Learn to integrate
@@ -27,7 +31,7 @@ const FeatureList = [
   },
   {
     title: "Robotics Perception & AI Integration",
-    Image: require("@site/static/img/module3.png").default,
+    Image: module3Image,
     description: (
       <>
         Explore how robots perceive their environment using sensors and AI.
@@ -38,7 +42,7 @@ const FeatureList = [
   },
   {
     title: "Autonomous Robotics & Real-World Applications",
-    Image: require("@site/static/img/module4.png").default,
+    Image: module4Image,
     description: (
       <>
         Apply your robotics skills to real-world scenarios. Design fully
